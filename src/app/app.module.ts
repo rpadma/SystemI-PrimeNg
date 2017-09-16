@@ -6,7 +6,7 @@ import { HttpModule } from '@angular/http';
 import { MenuModule, PanelModule, ChartModule, InputTextModule, ButtonModule, InputMaskModule, InputTextareaModule, EditorModule, CalendarModule, RadioButtonModule, FieldsetModule, DropdownModule, MultiSelectModule, ListboxModule, SpinnerModule, SliderModule, RatingModule, DataTableModule, ContextMenuModule, TabViewModule, DialogModule, StepsModule, ScheduleModule, TreeModule, GMapModule, DataGridModule, TooltipModule, ConfirmationService, ConfirmDialogModule, GrowlModule, DragDropModule, GalleriaModule } from 'primeng/primeng';
 
 import { AppComponent } from './app.component';
-import {RouterModule, Routes} from "@angular/router";
+import { RouterModule, Routes } from "@angular/router";
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { StatisticComponent } from './statistic/statistic.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
@@ -15,7 +15,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { SettingsComponent } from './settings/settings.component';
 
 import { AlltimesComponent } from './alltimes/alltimes.component';
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FielderrorsComponent } from './fielderrors/fielderrors.component';
 
 
@@ -23,10 +23,10 @@ const appRoutes: Routes = [
   { path: "", redirectTo: "/dashboard", pathMatch: "full" },
   { path: "dashboard", component: DashboardComponent },
   { path: "alltimes", component: AlltimesComponent },
-  { path: "timesheet", component: TimesheetComponent},
-  { path: "projects", component: ProjectsComponent},
-  { path: "profile", component: ProfileComponent},
-  { path: "settings", component: SettingsComponent},
+  { path: "timesheet", component: TimesheetComponent },
+  { path: "projects", component: ProjectsComponent },
+  { path: "profile", component: ProfileComponent },
+  { path: "settings", component: SettingsComponent }
 ];
 
 @NgModule({
@@ -46,7 +46,7 @@ const appRoutes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    RouterModule.forRoot(appRoutes),
+    RouterModule.forRoot(appRoutes, { useHash: true }),
     BrowserAnimationsModule,
     MenuModule,
     PanelModule,
@@ -80,7 +80,7 @@ const appRoutes: Routes = [
     DragDropModule,
     GalleriaModule
   ],
-  providers: [ ConfirmationService ],
+  providers: [ConfirmationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
