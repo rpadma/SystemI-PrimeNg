@@ -116,17 +116,7 @@ export class DashboardComponent implements AfterViewInit {
 
 
   ngAfterViewInit() {
-    Observable.interval(3000).timeInterval().subscribe(() => {
-
-      var hoursByTeam = this.hoursByTeamChartDataMixed.datasets;
-      var randomised = hoursByTeam.map((dataset) => {
-
-        dataset.data = dataset.data.map((hours) => hours * (Math.random() * 2));
-
-      });
-      this.mixedChart.refresh();
-    });
-
+   
   }
 
 

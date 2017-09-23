@@ -29,26 +29,43 @@ body {
 
 .menu-selected {
   background-color: #F15B2A !important;
-  color: #ffffff;
+  color: #D9E0E7;
 }
 
-/* Debugging Layouts
-@media screen and (min-width: 64.063em) {
-  .ui-lg-3 {
-    background-color: green;
-  }
+.splash-screen {
+  background: #D9E0E7;
+  width: 100%;
+  height: 100%; }
+  .splash-screen .splash-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -120px 0 0 -120px;
+    width: 200px;
+    height: 200px;
+    border-radius: 100%;
+    background-color: #D9E0E7;}
+    .splash-screen .splash-loader img {
+      width: 200px;
+      margin-top: 70px; }
+    .splash-screen .splash-loader:after {
+      content: '';
+      background: transparent;
+      width: 140%;
+      height: 140%;
+      position: absolute;
+      border-radius: 100%;
+      top: -20%;
+      left: -20%;
+      opacity: 0.7;
+      box-shadow: rgba(0, 0, 0, 0.6) -4px -5px 3px -3px;
+      animation: rotate 1s infinite linear; 
 }
 
-@media screen and (min-width: 40.063em) {
-  .ui-md-6 {
-    background-color: yellow;
-  }
+@keyframes rotate {
+  0% {
+  transform: rotateZ(0deg); }
+  100% {
+  transform: rotateZ(360deg); } 
 }
-
-@media screen and (max-width: 40em) {
-  .ui-sm-12 {
-    background-color: palevioletred;
-  }
-}
-*/
 
