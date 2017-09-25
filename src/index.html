@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>Agile Times</title>
-  <base href="">
+  <base href="/">
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -24,15 +24,28 @@
 
 <body>
   <app-root>Loading...</app-root>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').then((registration) => {
-        console.log('Service Worker registered.');
-      });
-    }
-  </script>
-
+<!--
+  <app-root>
+    
+        <div class="splash-screen">
+          <div class="splash-loader">
+              <img class="splash-logo" src="assets/img/logo-clear.svg" />
+          </div>
+        </div>
+    
+      </app-root>
+    -->
+      <script>
+        if ('serviceWorker' in navigator) {
+    
+          navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+    
+            console.log('Service Worker registered.');
+    
+          });
+    
+        }
+      </script>
 </body>
 
 </html>
