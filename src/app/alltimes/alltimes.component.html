@@ -46,3 +46,60 @@
   <p-contextMenu #tableContextMenu [model]="contextMenu"></p-contextMenu>
 
 </div>
+<br>
+<br>
+<div>
+  <button pButton type="button" (click)="onTimeSheetDialog = true" label="Add Timesheet"></button>
+</div>
+
+<p-dialog header="Add TimeSheet" [modal]="true" [(visible)]="onTimeSheetDialog"
+ width="500"
+height="500"
+>
+
+<div class="dialogBody">
+    
+    <form [formGroup]="mytimesheetform" (ngSubmit)="saveNewTimeSheetEntry()" class="ui-g">
+            
+             <div class="ui-g-12 ui-md-9">
+              <input type="text" pInputText formControlName="user" placeholder="Enter User"/>
+            </div>
+            <br>
+            <div class="ui-g-12 ui-md-9">
+              <input type="text" pInputText formControlName="project" placeholder="Enter Project"/>
+            </div>
+            <br>
+            <div class="ui-g-12 ui-md-9">
+              <input type="text" pInputText formControlName="category" placeholder="Enter category"/>
+            </div>
+            <br>
+            <div class="ui-g-12 ui-md-9">
+              <input type="text" pInputText formControlName="startTime" placeholder="Enter Start Time" type="number"/>
+            </div>
+            <br>
+            <div class="ui-g-12 ui-md-9">
+              <input type="text" pInputText formControlName="endTime" placeholder="Enter End Time" type="number"/>
+  
+            </div>
+            <div class="ui-g-12 ui-md-9">
+            <button pButton label="Save" icon="fa-check" type="submit"></button>
+            </div>
+    </form>
+</div>
+
+
+</p-dialog>
+
+<p-confirmDialog icon="fa fa-question-circle" width="425" [visible]="false" #confirmDialog>
+  
+    <p-footer>
+      <button type="button" pButton icon="fa-close" label="No, go back" (click)="confirmDialog.reject()"></button>
+      <button type="button" pButton icon="fa-check" label="Yes, lose changes"
+              (click)="confirmDialog.accept() && confirmDialog.hide()"></button>
+    </p-footer>
+  
+  
+  </p-confirmDialog>
+  
+  <p-growl [value]="messages"></p-growl>
+  
