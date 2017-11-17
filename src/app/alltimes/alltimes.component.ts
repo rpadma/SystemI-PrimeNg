@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MenuItem, DataTable, ConfirmationService,LazyLoadEvent,Message } from "primeng/primeng";
+import { MenuItem, DataTable, LazyLoadEvent, DialogModule,ConfirmationService,Message } from "primeng/primeng";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import Dexie from 'dexie';
 import { Observable } from "rxjs";
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-
 
 const MAX_EXAMPLE_RECORDS = 1000;
 
@@ -17,130 +16,126 @@ const MAX_EXAMPLE_RECORDS = 1000;
 export class AlltimesComponent implements OnInit {
 
   @ViewChild("dt") dt : DataTable;
-  
-    allTimesheetData = [];
-    onTimeSheetDialog = false;
-  
-    allProjectNames = ['', 'Payroll App', 'Mobile App', 'Agile Times'];
-  
-    allProjects = this.allProjectNames.map((proj) => {
-      return { label: proj, value: proj }
-    });
-  
-    selectedRows: Array<any>;
-  
-    messages: Message[] = [];
-    
-    contextMenu: MenuItem[];
-  
-    mytimesheetform: FormGroup;
-    recordCount : number;
-  
-    constructor(private apollo: Apollo,private confirmationService: ConfirmationService,private tsb: FormBuilder) {
-      
-     }
-  
-    ngOnInit() {
-  
-      const AllClientsQuery = gql`
-      query allTimeSheets {
-        allTimeSheets {
-            id
-            user
-            project
-            category
-            startTime
-            endTime
-          }
-      }`;
 
-  
-      const queryObservable = this.apollo.watchQuery({
-  
-        query: AllClientsQuery, pollInterval:200
-  
-      }).subscribe(({ data, loading }: any) => {
-  
-        console.log(data)
-        this.allTimesheetData = data.allTimeSheets;
-        this.recordCount = data.allTimeSheets.length;
-  
-      });
+  allTimesheetData = [];
 
-      this.mytimesheetform = this.tsb.group({
-        user: ['', [Validators.required, Validators.minLength(5)]],
-        project: ['', [Validators.required, Validators.maxLength(140)]],
-        category: ['', Validators.required],
-        startTime: ['',Validators.required],
-        endTime:['',Validators.required],
-        date:[new Date(),Validators.required]
-      })
-  
-    }
+  addEntryForm: FormGroup;
 
-    
-    
-    onEditComplete(editInfo) { }
-    
-    cancelNewTimeSheetDialog(){
-      this.confirmationService.confirm({
-        header: 'Cancel TimeSheet Creation',
-        message: 'Cancel all changes. Are you sure?',
-        accept: () => {
-          this.onTimeSheetDialog = false;
-          this.messages.push({ severity: 'info', summary: 'Edits Cancelled', detail: 'No changes were saved' });
-        },
-        reject: () => {
-          this.messages.push({ severity: 'warn', summary: 'Cancelled the Cancel', detail: 'Please continue your editing' });
-          console.log("False cancel. Just keep editing.");
+  displayEntryForm = false;
+
+  allProjectNames = ['', 'Payroll App', 'Mobile App', 'Agile Times'];
+
+  allProjects = this.allProjectNames.map((proj) => {
+    return { label: proj, value: proj }
+  });
+
+  selectedRows: Array<any>;
+
+  contextMenu: MenuItem[];
+
+  recordCount : number;
+
+  display: boolean = false;
+
+  constructor(private apollo: Apollo, private fb: FormBuilder,private confirmationService: ConfirmationService) { }
+
+ 
+
+  ngOnInit() {
+    this.addEntryForm = this.fb.group({
+      User: ['', [Validators.required]],
+      Project: ['', [Validators.required]],
+      Category: ['', [Validators.required]],
+      StartTime: ['', [Validators.required]],
+      EndTime: ['', [Validators.required]]
+    })
+
+    const AllClientsQuery = gql`
+    query allTimesheets {
+      allTimesheets {
+          id
+          user
+          project
+          category
+          startTime
+          endTime
         }
-      });
-  
-    }
+    }`;
+    
 
-    hasFormErrors() {
-      return !this.mytimesheetform.valid;
-    }
-    saveNewTimeSheetEntry(){
-      this.onTimeSheetDialog = false;
-  //    alert(JSON.stringify(this.mytimesheetform.value));
+    const queryObservable = this.apollo.watchQuery({
 
-const user =this.mytimesheetform.value.user;
-const project = this.mytimesheetform.value.project;
-const category = this.mytimesheetform.value.category;
-const startTime = this.mytimesheetform.value.startTime;
-const endTime = this.mytimesheetform.value.endTime;
+      query: AllClientsQuery,
+      pollInterval:200
 
-const createTimeSheet = gql`
-  mutation createTimeSheet ($user: String!, $project: String!, $category: String!, $startTime: Int!, $endTime: Int!, $date: DateTime!) {
-    createTimeSheet(user: $user, project: $project, category: $category, startTime: $startTime, endTime: $endTime, date: $date ) {
-      id
-    }
+    }).subscribe(({ data, loading }: any) => {
+
+      this.allTimesheetData = data.allTimesheets;
+      this.recordCount = data.allTimesheets.length;
+
+    });
+
   }
-`;
+  onEditComplete(editInfo)
+  {
+    
 
-console.log(user);
-this.apollo.mutate({
-mutation: createTimeSheet,
-  variables: {
-    user: user,
-    project: project,
-    category: category,
-    startTime: startTime,
-    endTime: endTime,
-    date: new Date()
   }
-}).subscribe(({ data }) => {
-  console.log('got data', data);
-  
-}, (error) => {
-  console.log('there was an error sending the query', error);
-});
-           this.onTimeSheetDialog=false;
-      this.messages.push({ severity: 'success', summary: 'Entry Created', detail: 'Your entry has been created' });
-    }
+  onSaveComplete() {
+        const user = this.addEntryForm.value.User;
+        const project = this.addEntryForm.value.Project;
+        const category = this.addEntryForm.value.Category;
+        const startTime = this.addEntryForm.value.StartTime;
+        const endTime = this.addEntryForm.value.EndTime;
+    
+        const createTimesheet = gql`
+          mutation createTimesheet ($user: String!, $project: String!, $category: String!, $startTime: Int!, $endTime: Int!, $date: DateTime!) {
+            createTimesheet(user: $user, project: $project, category: $category, startTime: $startTime, endTime: $endTime, date: $date ) {
+              id
+            }
+          }
+        `;
+    
+        this.apollo.mutate({
+          mutation: createTimesheet,
+          variables: {
+            user: user,
+            project: project,
+            category: category,
+            startTime: startTime,
+            endTime: endTime,
+            date: new Date()
+          }
+        }).subscribe(({ data }) => {
+          console.log('got data', data);
+          
+        }, (error) => {
+          console.log('there was an error sending the query', error);
+        });
+        this.displayEntryForm = false;
+      }
+      messages: Message[] = [];
 
-    onNewTimeSheetSubmit() {
-      alert(JSON.stringify(this.mytimesheetform.value));
-    }
+      cancelDialog() {
+       
+            this.confirmationService.confirm({
+              header: 'Cancel Time Creation',
+              message: 'Cancel all changes. Are you sure?',
+              accept: () => {
+                
+                //this.displayEditDialog = false;
+                this.displayEntryForm = false;
+                this.messages.push({ severity: 'info', summary: 'Edits Cancelled', detail: 'No changes were saved' });
+              },
+              reject: () => {
+                this.displayEntryForm = true;
+                this.onSaveComplete();
+                this.messages.push({ severity: 'warn', summary: 'Cancelled the Cancel', detail: 'Please continue your editing' });
+                //console.log("False cancel. Just keep editing.");
+              }
+            });
+        
+        
+          }
+
 }

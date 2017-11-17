@@ -23,29 +23,28 @@
 </head>
 
 <body>
-  <app-root>Loading...</app-root>
-<!--
   <app-root>
-    
-        <div class="splash-screen">
-          <div class="splash-loader">
-              <img class="splash-logo" src="assets/img/logo-clear.svg" />
-          </div>
-        </div>
-    
-      </app-root>
-    -->
-      <script>
-        if ('serviceWorker' in navigator) {
-    
-          navigator.serviceWorker.register('/service-worker.js').then((registration) => {
-    
-            console.log('Service Worker registered.');
-    
-          });
-    
-        }
-      </script>
+
+    <div class="splash-screen">
+      <div class="splash-loader">
+          <img class="splash-logo" src="assets/img/logo-clear.svg" />
+      </div>
+    </div>
+
+  </app-root>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+
+      navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+
+        console.log('Service Worker registered.');
+
+      });
+
+    }
+  </script>
+
 </body>
 
 </html>

@@ -1,0 +1,30 @@
+<h1>{{cameraName}}</h1>
+
+<div *ngIf="isStreaming">
+
+  <iframe type="text/html" frameborder="0" width="890" height="500" src="//video.nest.com/embedded/live/rrwzgV?autoplay=1"
+    allowfullscreen></iframe>
+
+
+</div>
+
+
+  <p-dataTable [value]="userTimeData" class="ui-g-12" 
+    [resizableColumns]="true"
+    sortField="eventDate" sortOrder="-1"
+    [rows]="5"
+  >
+    <p-column field="cameraName" header="CameraName"></p-column>
+    <p-column field="eventDate" header="EventDate" [sortable]="true"> 
+        <ng-template pTemplate="body" let-h="rowData">
+            {{h.eventDate | date:'short'}}
+        </ng-template>
+    </p-column>
+    <p-column field="image"  header="Image" class="ui-g-12" >
+        <ng-template pTemplate="body" let-h="rowData" class="avatar">
+
+            <img src={{h.image}}  class="avatar"/>
+        </ng-template>
+        </p-column>
+
+  </p-dataTable>

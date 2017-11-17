@@ -10,7 +10,9 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "favicon.ico"
+        "favicon.ico",
+        "manifest.json",
+        "./styles.css"
       ],
       "index": "index.html",
       "main": "main.ts",
@@ -26,7 +28,7 @@
         "../node_modules/quill/dist/quill.core.css",
         "../node_modules/quill/dist/quill.snow.css",
         "../node_modules/fullcalendar/dist/fullcalendar.css",
-        "./styles.css"
+        "styles.css"
       ],
       "scripts": [
         "../node_modules/chart.js/dist/Chart.js",
