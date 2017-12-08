@@ -8,6 +8,8 @@ import { NestCamEventModel } from '../../models/nestcam-event';
 import { NotificationService } from '../notification-service/notification-service';
 import gql from 'graphql-tag';
 import { Apollo } from 'apollo-angular';
+import { Observer } from 'rxjs';
+
 
 @Injectable()
 export class DeviceService {
@@ -185,13 +187,20 @@ private _LogMotionEvent(device: DeviceModel) {
       const vcameraName = device.name;
       const veventDate = device.LastEvent.startTime;
       const vimage = device.snapshotURL;
-  
-      console.log('got data finally '+vcameraName+ " "+veventDate);
+      var motionSnap;
+      var eventId;
 
+      this.getBase64ImageFromURL(vimage).subscribe(res => {
+        // console.log(res);
+        motionSnap = res;
+        console.log(typeof res);
+
+
+      
       const createMotionEvent = gql`
            mutation createMotionEvent($cameraName: String!, $eventDate: DateTime!, $image: String! ){
         createMotionEvent(cameraName: $cameraName,eventDate: $eventDate, image: $image)
-        {id}
+        id
       }
       `;
 
@@ -203,15 +212,97 @@ private _LogMotionEvent(device: DeviceModel) {
           eventDate: veventDate,
           image: vimage
         }
-      }).subscribe(({ data }) => {
-        console.log('got data', data);
-        
+      }).subscribe(({ data }:any) => {
+
+        eventId = data.createMotionEvent.id;
+        var filecontent;
+        this.urltoFile(res, eventId+".jpeg", "image/jpeg").then(function(file){
+             console.log(file);
+              filecontent = file;
+         })
+         const form = new FormData()
+         // passing a file
+         form.append('data',filecontent, eventId+".jpeg")
+ 
+          fetch('https://api.graph.cool/file/v1/cj7zthyzu01ws0193qx1ua5mf', {
+           method: 'POST',
+           body: form})
+         .then((response) =>  {
+           if (response.status >= 200 && response.status <= 302) {
+             return response
+           } else {
+             console.log("failed");
+           }
+         })
+         .then((response) =>  {
+           console.log(response)
+           return response
+         })
+         .then((data) => {
+            console.log('request succeeded with JSON response', data)              
+         })
+      
+         
       }, (error) => {
         console.log('there was an error sending the query', error);
       });
 
+
       
+
+      
+    });
+  }
+    
+    private urltoFile(url, filename, mimeType){
+      return (fetch(url)
+          .then(function(res){return res.arrayBuffer();})
+          .then(function(buf){return new File([buf], filename, {type:mimeType});})
+      );
+  }
+
   
+  private dataURLtoFile(dataurl, filename) {
+    var arr = dataurl.split(','), mime = 'image/jpeg',
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
     }
+    return new File([u8arr], filename, {type:mime});
+ }
+
+   private getBase64ImageFromURL(url:string) {
+      return Observable.create((observer:Observer<string>) => {
+        let img = new Image();
+        img.src = url;
+        img.crossOrigin="anonymous";
+      img.src = 'https://cors-anywhere.herokuapp.com/' + url;
+        if (!img.complete) {
+          img.onload = () => {
+            observer.next(this.getBase64Image(img));
+            observer.complete();
+          };
+          img.onerror = (err) => {
+            observer.error(err);
+          };
+        } else {
+          observer.next(this.getBase64Image(img));
+          observer.complete();
+        }
+      });
+    }
+
+    
+    private getBase64Image(img:HTMLImageElement) {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+     //return dataURL;
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+    
 }
 
